@@ -40,7 +40,7 @@ def _to_rgb(c):
   c= cC.to_rgb(c)
   return np.array(c)
 
-def is_number(s):
+def _is_number(s):
   """
   Check if *c* is a number (from http://stackoverflow.com/questions/354038/how-do-i-check-if-a-string-is-a-number-in-python)
   Parameters
@@ -96,7 +96,7 @@ def colorAlpha_to_rgb(color, alpha, bg='w'):
 
   color = _to_rgb(color)  #convert the color
   bg = _to_rgb(bg)   #convert the background
-  if( is_number(alpha) == False or alpha < 0 or alpha > 1):
+  if( _is_number(alpha) == False or alpha < 0 or alpha > 1):
     raise ValueError("'alpha' must be a float with value between 0 and 1, included") 
 
   rgb = (1.-alpha) * bg + alpha*color  #interpolate between background and color
