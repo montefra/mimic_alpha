@@ -1,5 +1,5 @@
 """
-The function 'colorAlpha_to_rgb' returns a lsit of RGB color that mimic 
+The function 'colorAlpha_to_rgb' returns a list of RGB color that mimic 
 a RGBA on a given background
 The code implements the algorithm from: http://stackoverflow.com/questions/2049230/convert-rgba-color-to-rgb?rq=1
 
