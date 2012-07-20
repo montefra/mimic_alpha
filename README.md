@@ -11,7 +11,6 @@ a few values for the input color/alpha on white background shows that this appro
 
 Dependances:
   Numpy
-
   Matplotlib
 
 Licence:
