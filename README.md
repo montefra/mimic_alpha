@@ -14,6 +14,8 @@ Dependances:
   Numpy
   Matplotlib
 
+Works with python 2.7 and 3.2 (and likely 3.3)
+
 Licence:
   This a free sofware and come without any warranty.
   It can be freely used, modified and redistributed, 
