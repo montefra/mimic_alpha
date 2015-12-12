@@ -27,7 +27,7 @@ import matplotlib.colors as mplc
 from matplotlib.colors import colorConverter as cC
 import numpy as np
 
-__version__ = "0.21"
+__version__ = "0.22"
 __author__ = "Francesco Montesano (franz.bergesund@gmail.com)"
 
 __all__ = ["colorAlpha_to_rgb"]
@@ -192,12 +192,13 @@ def colorAlpha_to_rgb(colors, alpha, bg='w'):
     return rgb
 
 
-def cmap(cmap_name, alpha, bg="w", out_cmap_name=None):
+def cmap(cmap_name, alpha, bg="w", set_under=None, set_over=None,
+         set_bad=None, out_cmap_name=None):
     """
     Generate an RGB colormap from a given mpl cmap and alpha value.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cmap_name: String
        A standard Matplotlib colormap name:
        http://matplotlib.org/examples/color/colormaps_reference.html
@@ -207,14 +208,25 @@ def cmap(cmap_name, alpha, bg="w", out_cmap_name=None):
        Color of the background.
     out_cmap_name: String
        Name of the returned colormap.
+    set_under: Matplotlib color
+       Set color to be used for low out-of-range values.
+    set_over: Matplotlib color
+       Set color to be used for high out-of-range values.
+    set_bad: Matplotlib color
+       Set color to be used for masked values.
 
-    Notes:
+    Output
     ------
+    ma_cmap: :class:`matplotlib.colors.Colormap`
+       A colormap instance that mimics an RGBA standard cmap.
+
+    Notes
+    -----
     This code is based on the make_cmap() program written by Chris Slocum:
       http://schubert.atmos.colostate.edu/~cslocum/custom_cmap.html
 
-    Example:
-    --------
+    Example
+    -------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> import mimic_alpha as ma
@@ -268,6 +280,18 @@ def cmap(cmap_name, alpha, bg="w", out_cmap_name=None):
         out_cmap_name = cmap_name + "_{0:.1f}".format(alpha)
     # mimic-alpha colormap:
     ma_cmap = mplc.LinearSegmentedColormap(out_cmap_name, cdict, 256)
+
+    # Set mimic-alpha colors for masked and out-of-range values:
+    if set_under is not None:
+        RGBunder = colorAlpha_to_rgb(set_under, alpha, bg)[0]
+        ma_cmap.set_under(RGBunder)
+    if set_over is not None:
+        RGBover  = colorAlpha_to_rgb(set_over,  alpha, bg)[0]
+        ma_cmap.set_over(RGBover)
+    if set_bad is not None:
+        RGBbad   = colorAlpha_to_rgb(set_bad,   alpha, bg)[0]
+        ma_cmap.set_bad(RGBbad)
+
     return ma_cmap
 
 
