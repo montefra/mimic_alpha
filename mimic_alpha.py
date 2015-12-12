@@ -22,6 +22,8 @@ Licence:
 
 """
 
+import matplotlib.pyplot as plt
+import matplotlib.colors as mplc
 from matplotlib.colors import colorConverter as cC
 import numpy as np
 
@@ -188,6 +190,81 @@ def colorAlpha_to_rgb(colors, alpha, bg='w'):
     rgb = [(1.-a) * bg + a*c for c,a in zip(colors, alpha)]
 
     return rgb
+
+
+def cmap(cmap_name, alpha, bg="w"):
+    """
+    Generate an RGB colormap from a given mpl cmap and alpha value.
+
+    Parameters:
+    -----------
+    cmap_name: String
+       A standard Matplotlib colormap name:
+       http://matplotlib.org/examples/color/colormaps_reference.html
+    alpha: Float
+       Value of alpha to mimic in range [0,1].
+    bg: Matplotlib color
+       Color of the background.
+
+    Notes:
+    ------
+    This code is based on the make_cmap() program written by Chris Slocum:
+      http://schubert.atmos.colostate.edu/~cslocum/custom_cmap.html
+
+    Example:
+    --------
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> import mimic_alpha as ma
+
+    >>> plt.ion()
+
+    >>> # Make a gradient image:
+    >>> gradient = np.linspace(0, 1, 50)
+    >>> image = np.repeat(np.atleast_2d(gradient), repeats=2, axis=0)
+
+    >>> # Compare contourf() plots without alpha, with alpha, and mimic-alpha:
+    >>> plt.figure(0)
+    >>> plt.clf()
+    >>> plt.subplots_adjust(0.1, 0.1, 0.95, 0.95, hspace=0.4)
+    >>> ax = plt.subplot(411)
+    >>> ax.set_title("Standard 'hot' colormap")
+    >>> cs = plt.contourf(image, levels=gradient, cmap="hot")
+    >>> ax.set_xticklabels([""])
+    >>> ax = plt.subplot(412)
+    >>> mahot = ma.cmap("hot", 1.0)
+    >>> ax.set_title("Mimic-alpha 'hot' colormap with alpha=1.0")
+    >>> cs = plt.contourf(image, levels=gradient, cmap=mahot)
+    >>> ax.set_xticklabels([""])
+    >>> ax = plt.subplot(413)
+    >>> ax.set_title("Standard 'hot' colormap with alpha=0.5")
+    >>> cs = plt.contourf(image, levels=gradient, cmap="hot", alpha=0.5)
+    >>> ax.set_xticklabels([""])
+    >>> ax = plt.subplot(414)
+    >>> mahot = ma.cmap("hot", 0.5)
+    >>> ax.set_title("Mimic-alpha 'hot' colormap with alpha=0.5")
+    >>> cs = plt.contourf(image, levels=gradient, cmap=mahot)
+
+    >>> # Compare outputs when saved as a postscript file:
+    >>> plt.savefig("mimic_alpha_hot.ps")
+    """
+    # Read input cmap:
+    input_cmap = plt.cm.get_cmap(cmap_name)
+    ncolors = input_cmap.N
+
+    position = np.linspace(0, 1, ncolors)
+    # Convert RGBA colors from cmap into RGB:
+    cdict = {'red':[], 'green':[], 'blue':[]}
+    for pos in position:
+        r, g, b = colorAlpha_to_rgb(input_cmap(pos), alpha, bg)[0]
+        cdict['red'  ].append((pos, r, r))
+        cdict['green'].append((pos, g, g))
+        cdict['blue' ].append((pos, b, b))
+
+    # mimic-alpha colormap:
+    ma_cmap = mplc.LinearSegmentedColormap('my_colormap', cdict, 256)
+    return ma_cmap
+
 
 if __name__ == "__main__":
     print(colorAlpha_to_rgb('r', 0.5))
