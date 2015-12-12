@@ -192,7 +192,7 @@ def colorAlpha_to_rgb(colors, alpha, bg='w'):
     return rgb
 
 
-def cmap(cmap_name, alpha, bg="w"):
+def cmap(cmap_name, alpha, bg="w", out_cmap_name=None):
     """
     Generate an RGB colormap from a given mpl cmap and alpha value.
 
@@ -205,6 +205,8 @@ def cmap(cmap_name, alpha, bg="w"):
        Value of alpha to mimic in range [0,1].
     bg: Matplotlib color
        Color of the background.
+    out_cmap_name: String
+       Name of the returned colormap.
 
     Notes:
     ------
@@ -261,8 +263,11 @@ def cmap(cmap_name, alpha, bg="w"):
         cdict['green'].append((pos, g, g))
         cdict['blue' ].append((pos, b, b))
 
+    # Set output colormap name:
+    if out_cmap_name is None:
+        out_cmap_name = cmap_name + "_{0:.1f}".format(alpha)
     # mimic-alpha colormap:
-    ma_cmap = mplc.LinearSegmentedColormap('my_colormap', cdict, 256)
+    ma_cmap = mplc.LinearSegmentedColormap(out_cmap_name, cdict, 256)
     return ma_cmap
 
 
